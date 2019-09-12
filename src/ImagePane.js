@@ -11,12 +11,17 @@ const container = css`
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #F0FFF4;
+  padding: 0 1rem;
 `;
 
 const ImagePane = ({ url }) => {
+  const renderedComponent = url
+  ? (<img src={url} alt="" css={image} />) : (<p>Try getting a GIF!</p>);
+
   return (
     <div css={container}>
-      <img src={url} alt="" css={image} />
+      {renderedComponent}
     </div>
   );
 };
