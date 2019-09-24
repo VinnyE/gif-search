@@ -17,13 +17,17 @@ const container = css`
 
 const ImagePane = ({ url }) => {
   const renderedComponent = url
-  ? (<img src={url} alt="" css={image} />) : (<p>Try getting a GIF!</p>);
+  ? (<img src={url} alt="Some GIF" css={image} />) : (<p>Try getting a GIF!</p>);
 
   return (
     <div css={container}>
       {renderedComponent}
     </div>
   );
+};
+
+ImagePane.propTypes = {
+  url: PropTypes.string,
 };
 
 export default ImagePane;

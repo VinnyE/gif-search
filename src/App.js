@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { jsx, css } from '@emotion/core';
 import SearchControls from './SearchControls';
 import ImagePane from './ImagePane';
@@ -24,44 +24,46 @@ const card = css`
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 `;
 
-class App extends Component {
-  state = {
-    gifUrl: '',
-    isFetching: false,
-  };
+const App = () => {
+  const [gifUrl, setGifUrl] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [query, setQuery] = useState('');
 
-  onSearch = async (searchString) => {
-    this.setState({
-      isFetching: true,
-    });
-    try {
-      // leaving api key embedded here for demo purposes. 
-      const response = await fetch(`https://api.giphy.com/v1/gifs/random?api_key=mkC442pRcCUmDCvFOMuvjslbuTIvxEbN&tag=${searchString}`);
-      const result = await response.json();
-      const { data: { image_url }} = result;
+  useEffect(() => {
+    const search = async () => {
+      setLoading(true);
 
-      this.setState({
-        gifUrl: image_url,
-      });
-    } catch(err) {
-      console.error(`An error occurred: ${err}`)
+      try {
+        // leaving api key embedded here for demo purposes. 
+        const response = await fetch(`https://api.giphy.com/v1/gifs/random?api_key=mkC442pRcCUmDCvFOMuvjslbuTIvxEbN&tag=${query}`);
+        const result = await response.json();
+        const { data: { image_url }} = result;
+
+        setGifUrl(image_url);
+      } catch(err) {
+        console.error('An error occurred trying to fetch your gif.');
+      } finally {
+        setLoading(false);
+      }
+    }; 
+
+    if (query !== '') {
+      search();
     }
 
-    this.setState({
-      isFetching: false,
-    });
-  };
+    return () => {
+      setQuery('');
+    }
+  }, [query]);
 
-  render() {
-    return (
-      <div css={container}>
-        <div css={card}>
-          <SearchControls isFetching={this.state.isFetching} onSearch={this.onSearch} />
-          <ImagePane url={this.state.gifUrl} />
-        </div>
+  return (
+    <div css={container}>
+      <div css={card}>
+        <SearchControls isFetching={loading} onSearch={(q) => setQuery(q)} />
+        <ImagePane url={gifUrl} />
       </div>
-    );
-  };
-}
+    </div>
+  );
+};
 
 export default App;

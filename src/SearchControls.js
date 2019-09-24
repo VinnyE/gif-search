@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { jsx, css } from '@emotion/core'
 
@@ -47,48 +47,27 @@ const button = css`
   }
 `;
 
-class SearchControls extends Component {
-  static propTypes = {
-    onSearch: PropTypes.func,
-  };
+const SearchControls = ({ onSearch, isFetching }) => {
+  const [value, setValue] = useState('martian');
 
-  state = {
-    value: 'martian',
-  };
+  return (
+    <div css={container}>
+      <form onSubmit={(e) => { onSearch(value); e.preventDefault();}} css={form}>
+        <label css={label} htmlFor='category-select'> Pick a category for your GIF: </label>
+        <select css={select} id='category-select' value={value} onChange={(e) => setValue(e.target.value)}>
+          <option value="dog">Dog</option>
+          <option value="cat">Cat</option>
+          <option value="martian">Martian</option>
+          <option value="random">Random</option>
+        </select>
+        <input type="submit" value="Get GIF!" css={button} disabled={isFetching}/>
+      </form>
+    </div>
+  );
+};
 
-  handleSelectionChange = (event) => {
-    this.setState({
-      value: event.target.value
-    })
-  };
-
-  handleSubmit = (event) => {
-    const { onSearch } = this.props;
-    const { value } = this.state;
-
-    onSearch(value);
-    event.preventDefault();
-  };
-
-  render() {
-    const { value } = this.state;
-    const { isFetching } = this.props;
-
-    return (
-      <div css={container}>
-        <form onSubmit={this.handleSubmit} css={form}>
-          <label css={label} htmlFor='category-select'> Pick a category for your GIF: </label>
-          <select css={select} id='category-select' value={value} onChange={this.handleSelectionChange}>
-            <option value="dog">Dog</option>
-            <option value="cat">Cat</option>
-            <option value="martian">Martian</option>
-            <option value="random">Random</option>
-          </select>
-          <input type="submit" value="Get GIF!" css={button} disabled={isFetching}/>
-        </form>
-      </div>
-    );
-  }
+SearchControls.propTypes = {
+  onSearch: PropTypes.func,
 };
 
 export default SearchControls;
